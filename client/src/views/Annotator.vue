@@ -11,6 +11,9 @@
           @setcursor="setCursor"
           ref="select"
         />
+
+        <ValidationButton :verified=false />
+
         <hr />
 
         <BBoxTool
@@ -206,7 +209,7 @@
       <div id="frame" class="frame" @wheel="onwheel">
         <canvas class="canvas" id="editor" ref="image" resize />
       </div>
-    </v-touch>   
+    </v-touch>
     </div>
 
     <div v-show="annotating.length > 0" class="fixed-bottom alert alert-warning alert-dismissible fade show">
@@ -262,6 +265,7 @@ import BrushPanel from "@/components/annotator/panels/BrushPanel";
 import EraserPanel from "@/components/annotator/panels/EraserPanel";
 import KeypointPanel from "@/components/annotator/panels/KeypointPanel";
 import DEXTRPanel from "@/components/annotator/panels/DEXTRPanel";
+import ValidationButton from "../components/annotator/tools/ValidationButton.vue";
 
 import { mapMutations } from "vuex";
 
@@ -297,8 +301,9 @@ export default {
     KeypointPanel,
     AnnotateButton,
     DEXTRTool,
-    DEXTRPanel
-  },
+    DEXTRPanel,
+    ValidationButton
+},
   mixins: [toastrs, shortcuts],
   props: {
     identifier: {
@@ -1133,6 +1138,10 @@ export default {
   background-color: #7c818c;
   overflow: hidden;
   position: relative;
+}
+
+.verified {
+  background-color: #00bf36;
 }
 
 .frame {
