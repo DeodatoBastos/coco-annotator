@@ -1,5 +1,5 @@
 <script>
-import button from '@/mixins/toolBar/button'
+import button from "@/mixins/toolBar/button";
 
 export default {
   name: "ValidationButton",
@@ -8,19 +8,19 @@ export default {
     verified: {
       type: Boolean,
       required: false,
-    }
+    },
   },
   data() {
     return {
       name: "Validate Annotation",
-      icon: "fa-check-square-o"
+      icon: "fa-check-square-o",
     };
   },
   methods: {
     execute() {
-      this.verified = !this.verified;
-      console.log(this.$parent)
-    }
+      this.$parent.verified = !this.verified;
+      // this.$parent.verify();
+    },
   },
 };
 </script>

@@ -1,6 +1,5 @@
 <template>
-  <div style="display: block; height: inherit;">
-    
+  <div style="display: block; height: inherit">
     <aside v-show="panels.show.left" class="left-panel shadow-lg">
       <div v-show="mode == 'segment'">
         <hr />
@@ -12,7 +11,7 @@
           ref="select"
         />
 
-        <ValidationButton :verified=false />
+        <ValidationButton :verified="verified" />
 
         <hr />
 
@@ -45,6 +44,7 @@
           @setcursor="setCursor"
           ref="brush"
         />
+
         <EraserTool
           v-model="activeTool"
           :scale="image.scale"
@@ -57,6 +57,7 @@
           @setcursor="setCursor"
           ref="keypoint"
         />
+
         <DEXTRTool
           v-model="activeTool"
           :scale="image.scale"
@@ -78,7 +79,7 @@
         <ShowAllButton />
         <HideAllButton />
       </div>
-      <hr>
+      <hr />
       <CenterButton />
       <UndoButton />
 
@@ -196,28 +197,42 @@
             />
           </div>
           <div v-if="$refs.dextr != null">
-            <DEXTRPanel
-              :dextr="$refs.dextr"
-            />
+            <DEXTRPanel :dextr="$refs.dextr" />
           </div>
         </div>
       </div>
     </aside>
 
-    <div class="middle-panel" :style="{ cursor: cursor }">
-    <v-touch @pinch="onpinch" @pinchstart="onpinchstart">
-      <div id="frame" class="frame" @wheel="onwheel">
-        <canvas class="canvas" id="editor" ref="image" resize />
-      </div>
-    </v-touch>
+    <div v-if="verified" class="middle-verified" :style="{ cursor: cursor }">
+      <v-touch @pinch="onpinch" @pinchstart="onpinchstart">
+        <div id="frame" class="frame" @wheel="onwheel">
+          <canvas class="canvas" id="editor" ref="image" resize />
+        </div>
+      </v-touch>
+    </div>
+    <div v-else class="middle-panel" :style="{ cursor: cursor }">
+      <v-touch @pinch="onpinch" @pinchstart="onpinchstart">
+        <div id="frame" class="frame" @wheel="onwheel">
+          <canvas class="canvas" id="editor" ref="image" resize />
+        </div>
+      </v-touch>
     </div>
 
-    <div v-show="annotating.length > 0" class="fixed-bottom alert alert-warning alert-dismissible fade show">
+    <div
+      v-show="annotating.length > 0"
+      class="fixed-bottom alert alert-warning alert-dismissible fade show"
+    >
       <span>
-      This image is being annotated by <b>{{ annotating.join(', ') }}</b>.
+        This image is being annotated by <b>{{ annotating.join(", ") }}</b>
+        .
       </span>
-      
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-label="Close"
+      >
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
@@ -302,14 +317,18 @@ export default {
     AnnotateButton,
     DEXTRTool,
     DEXTRPanel,
-    ValidationButton
-},
+    ValidationButton,
+  },
   mixins: [toastrs, shortcuts],
   props: {
     identifier: {
       type: [Number, String],
-      required: true
-    }
+      required: true,
+    },
+    verified: {
+      type: Boolean,
+      required: false,
+    },
   },
   data() {
     return {
@@ -323,8 +342,8 @@ export default {
       panels: {
         show: {
           left: true,
-          right: true
-        }
+          right: true,
+        },
       },
       current: {
         category: -1,
@@ -349,26 +368,26 @@ export default {
         next: null,
         filename: "",
         categoryIds: [],
-        data: null
+        data: null,
       },
       text: {
         topLeft: null,
-        topRight: null
+        topRight: null,
       },
       categories: [],
       dataset: {
-        annotate_url: ""
+        annotate_url: "",
       },
       loading: {
         image: true,
         data: true,
-        loader: null
+        loader: null,
       },
       search: "",
       annotating: [],
       pinching: {
-        old_zoom: 1
-      }
+        old_zoom: 1,
+      },
     };
   },
   methods: {
@@ -387,28 +406,28 @@ export default {
           brush: this.$refs.brush.export(),
           magicwand: this.$refs.magicwand.export(),
           select: this.$refs.select.export(),
-          settings: this.$refs.settings.export()
+          settings: this.$refs.settings.export(),
         },
         dataset: this.dataset,
         image: {
           id: this.image.id,
           metadata: this.$refs.settings.exportMetadata(),
           settings: {
-            selectedLayers: this.current
+            selectedLayers: this.current,
           },
-          category_ids: []
+          category_ids: [],
         },
         settings: {
           activeTool: this.activeTool,
           zoom: this.zoom,
-          tools: {}
+          tools: {},
         },
-        categories: []
+        categories: [],
       };
 
       if (refs.category != null && this.mode === "segment") {
         this.image.categoryIds = [];
-        refs.category.forEach(category => {
+        refs.category.forEach((category) => {
           let categoryData = category.export();
           data.categories.push(categoryData);
 
@@ -434,7 +453,7 @@ export default {
     onpinchstart(e) {
       e.preventDefault();
       if (!this.doneLoading) return;
-      let view = this.paper.view;
+      // let view = this.paper.view;
       this.pinching.old_zoom = this.paper.view.zoom;
       return false;
     },
@@ -449,7 +468,7 @@ export default {
       let beta = this.paper.view.zoom / curr_zoom;
       let pc = viewPosition.subtract(this.paper.view.center);
       let a = viewPosition.subtract(pc.multiply(beta)).subtract(this.paper.view.center);  
-      let transform = {zoom: curr_zoom, offset: a}
+      let transform = { zoom: curr_zoom, offset: a };
       if (transform.zoom < 10 && transform.zoom > 0.01) {
         this.image.scale = 1 / transform.zoom;
         this.paper.view.zoom = transform.zoom;
@@ -522,7 +541,7 @@ export default {
       this.paper.setup(canvas);
       this.paper.view.viewSize = [
         this.paper.view.size.width,
-        window.innerHeight
+        window.innerHeight,
       ];
       this.paper.activate();
 
@@ -582,7 +601,7 @@ export default {
       this.loading.data = true;
       axios
         .get("/api/annotator/data/" + this.image.id)
-        .then(response => {
+        .then((response) => {
           let data = response.data;
 
           this.loading.data = false;
@@ -628,12 +647,12 @@ export default {
     onCategoryClick(indices) {
       this.current.annotation = indices.annotation;
       this.current.category = indices.category;
-      if (!indices.hasOwnProperty('keypoint')) {
+      if (!indices.hasOwnProperty("keypoint")) {
         indices.keypoint = -1;
       }
       if (indices.keypoint !== -1) {
         this.current.keypoint = indices.keypoint;
-        let ann = this.currentCategory.category.annotations[this.current.annotation];
+        // let ann = this.currentCategory.category.annotations[this.current.annotation];
         let kpTool = this.$refs.keypoint;
         let selectTool = this.$refs.select;
         let category = this.$refs.category[this.current.category];
@@ -843,33 +862,33 @@ export default {
     scrollElement(element) {
       element.scrollIntoView({
         behavior: "smooth",
-        block: "center"
+        block: "center",
       });
     },
     showAll() {
       if (this.$refs.category == null) return;
 
-      this.$refs.category.forEach(category => {
+      this.$refs.category.forEach((category) => {
         category.isVisible = category.category.annotations.length > 0;
       });
     },
     hideAll() {
       if (this.$refs.category == null) return;
 
-      this.$refs.category.forEach(category => {
+      this.$refs.category.forEach((category) => {
         category.isVisible = false;
         category.showAnnotations = false;
       });
     },
     findCategoryByName(categoryName) {
       let categoryComponent = this.$refs.category.find(
-        category =>
+        (category) =>
           category.category.name.toLowerCase() === categoryName.toLowerCase()
       );
       if (!categoryComponent) return null;
       return categoryComponent.category;
     },
-    addAnnotation(categoryName, segments, keypoints, isbbox=false) {
+    addAnnotation(categoryName, segments, keypoints, isbbox = false) {
       segments = segments || [];
       keypoints = keypoints || [];
 
@@ -883,8 +902,8 @@ export default {
         category_id: category.id,
         segmentation: segments,
         keypoints: keypoints,
-        isbbox: isbbox
-      }).then(response => {
+        isbbox: isbbox,
+      }).then((response) => {
         let annotation = response.data;
         category.annotations.push(annotation);
       });
@@ -895,17 +914,17 @@ export default {
       if (!newCategory || !annotation) return;
 
       Annotations.update(annotation.id, { category_id: newCategory.id }).then(
-        response => {
+        (response) => {
           let newAnnotation = {
             ...response.data,
             ...annotation,
             metadata: response.data.metadata,
-            category_id: newCategory.id
+            category_id: newCategory.id,
           };
 
           if (newAnnotation) {
             oldCategory.annotations = oldCategory.annotations.filter(
-              a => a.id !== annotation.id
+              (a) => a.id !== annotation.id
             );
             newCategory.annotations.push(newAnnotation);
           }
@@ -923,13 +942,15 @@ export default {
       }
     },
     nextImage() {
-      if(this.image.next != null)
-        this.$refs.filetitle.route(this.image.next);
+      if (this.image.next != null) this.$refs.filetitle.route(this.image.next);
     },
     previousImage() {
-      if(this.image.previous != null)
+      if (this.image.previous != null)
         this.$refs.filetitle.route(this.image.previous);
-    }
+    },
+    // verfiy() {
+    //   // change the value in json
+    // }
   },
   watch: {
     doneLoading(done) {
@@ -988,7 +1009,7 @@ export default {
     },
     user() {
       this.removeFromAnnotatingList();
-    }
+    },
   },
   computed: {
     doneLoading() {
@@ -1016,8 +1037,8 @@ export default {
         return null;
       }
       if (this.currentAnnotation == null 
-      || this.currentAnnotation.keypointLabels.length === 0 
-      || !this.currentAnnotation.showKeypoints)
+        || this.currentAnnotation.keypointLabels.length === 0
+        || !this.currentAnnotation.showKeypoints)
       {
         return null;
       }
@@ -1031,7 +1052,7 @@ export default {
     },
     user() {
       return this.$store.getters["user/user"];
-    }
+    },
   },
   sockets: {
     annotating(data) {
@@ -1045,7 +1066,7 @@ export default {
       } else {
         this.annotating.splice(this.annotating.indexOf(data.username), 1);
       }
-    }
+    },
   },
   beforeRouteLeave(to, from, next) {
     this.current.annotation = -1;
@@ -1053,7 +1074,7 @@ export default {
     this.$nextTick(() => {
       this.$socket.emit("annotating", {
         image_id: this.image.id,
-        active: false
+        active: false,
       });
       this.save(next);
     });
@@ -1079,7 +1100,7 @@ export default {
 
     this.image.id = parseInt(this.identifier);
     this.image.url = "/api/image/" + this.image.id;
-  }
+  },
 };
 </script>
 
@@ -1140,8 +1161,13 @@ export default {
   position: relative;
 }
 
-.verified {
+.middle-verified {
+  display: block;
+  width: inherit;
+  height: inherit;
   background-color: #00bf36;
+  overflow: hidden;
+  position: relative;
 }
 
 .frame {
