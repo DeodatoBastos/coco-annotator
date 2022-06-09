@@ -1,7 +1,4 @@
-
-
 import time
-import logging
 
 
 def profile(func):

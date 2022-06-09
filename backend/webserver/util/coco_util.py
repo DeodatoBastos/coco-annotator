@@ -1,7 +1,6 @@
 import pycocotools.mask as mask
 import numpy as np
-import shapely
-from shapely.geometry import LineString, Point
+from shapely.geometry import LineString
 
 from database import (
     fix_ids,

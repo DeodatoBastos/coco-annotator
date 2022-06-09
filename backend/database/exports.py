@@ -1,7 +1,6 @@
 from mongoengine import *
 
 import datetime
-import time
 
 
 class ExportModel(DynamicDocument):

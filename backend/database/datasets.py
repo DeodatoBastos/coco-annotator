@@ -1,4 +1,3 @@
-
 from flask_login import current_user
 from mongoengine import *
 from config import Config
