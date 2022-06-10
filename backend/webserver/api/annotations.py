@@ -15,6 +15,7 @@ create_annotation.add_argument(
     'image_id', type=int, required=True, location='json')
 create_annotation.add_argument('category_id', type=int, location='json')
 create_annotation.add_argument('isbbox', type=bool, location='json')
+create_annotation.add_argument('isverified', type=bool, location='json')
 create_annotation.add_argument('metadata', type=dict, location='json')
 create_annotation.add_argument('segmentation', type=list, location='json')
 create_annotation.add_argument('keypoints', type=list, location='json')
@@ -39,6 +40,7 @@ class Annotation(Resource):
         image_id = args.get('image_id')
         category_id = args.get('category_id')
         isbbox = args.get('isbbox')
+        isverified = args.get('isverified')
         metadata = args.get('metadata', {})
         segmentation = args.get('segmentation', [])
         keypoints = args.get('keypoints', [])
@@ -59,7 +61,8 @@ class Annotation(Resource):
                 metadata=metadata,
                 segmentation=segmentation,
                 keypoints=keypoints,
-                isbbox=isbbox
+                isbbox=isbbox,
+                isverified=isverified
             )
             annotation.save()
         except (ValueError, TypeError) as e:
