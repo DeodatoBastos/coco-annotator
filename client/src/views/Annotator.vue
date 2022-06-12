@@ -690,9 +690,9 @@ export default {
       return this.$refs.category[index];
     },
     // Current Annotation Operations
-    uniteCurrentAnnotation(compound, simplify = true, undoable = true, isBBox = false) {
+    uniteCurrentAnnotation(compound, simplify = true, undoable = true, isBBox = false, isVerified = false) {
       if (this.currentAnnotation == null) return;
-      this.currentAnnotation.unite(compound, simplify, undoable, isBBox);
+      this.currentAnnotation.unite(compound, simplify, undoable, isBBox, isVerified);
     },
     subtractCurrentAnnotation(compound, simplify = true, undoable = true) {
       if (this.currentCategory == null) return;
@@ -889,7 +889,7 @@ export default {
       if (!categoryComponent) return null;
       return categoryComponent.category;
     },
-    addAnnotation(categoryName, segments, keypoints, isbbox = false) {
+    addAnnotation(categoryName, segments, keypoints, isbbox = false, isverified = false) {
       segments = segments || [];
       keypoints = keypoints || [];
 
@@ -904,6 +904,7 @@ export default {
         segmentation: segments,
         keypoints: keypoints,
         isbbox: isbbox,
+        isverified: isverified,
       }).then((response) => {
         let annotation = response.data;
         category.annotations.push(annotation);
@@ -949,9 +950,13 @@ export default {
       if (this.image.previous != null)
         this.$refs.filetitle.route(this.image.previous);
     },
-    // verfiy() {
-    //   // change the value in json
-    // }
+    getVerfiyInfo() {
+      // TODO: get info from json
+      console.log(this.image)
+    }
+    // updateVerifyInfo() {
+      // TODO: update json file
+    //}
   },
   watch: {
     doneLoading(done) {

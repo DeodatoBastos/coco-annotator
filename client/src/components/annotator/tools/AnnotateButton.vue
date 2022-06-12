@@ -64,12 +64,14 @@ export default {
               let segmentation = annotation.segmentation || [];
               let category = indexedCategories[annotation.category_id];
               let isbbox = annotation.isbbox || false;
+              let isverified = annotation.isverified || false;
 
               this.$parent.addAnnotation(
                 category.name,
                 segmentation,
                 keypoints,
-                isbbox=isbbox
+                isbbox=isbbox,
+                isverified=isverified
               );
             });
           })
