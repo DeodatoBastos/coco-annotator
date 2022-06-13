@@ -325,11 +325,6 @@ export default {
       type: [Number, String],
       required: true,
     },
-    verified: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
   },
   data() {
     return {
@@ -389,6 +384,7 @@ export default {
       pinching: {
         old_zoom: 1,
       },
+      verified: false,
     };
   },
   methods: {
@@ -950,9 +946,13 @@ export default {
       if (this.image.previous != null)
         this.$refs.filetitle.route(this.image.previous);
     },
-    getVerfiyInfo() {
-      // TODO: get info from json
-      console.log(this.image)
+    getVerifyInfo() {
+      let url = "/api/image/" + this.image.id + "/coco";
+      // id = this.image.id
+
+      axios.get(url).then((response) => {
+        this.verified = response.data.annotations[0].isverified
+      });
     }
     // updateVerifyInfo() {
       // TODO: update json file
@@ -1098,6 +1098,7 @@ export default {
 
     this.initCanvas();
     this.getData();
+    this.getVerifyInfo();
 
     this.$socket.emit("annotating", { image_id: this.image.id, active: true });
   },
