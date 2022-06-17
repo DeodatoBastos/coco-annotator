@@ -651,9 +651,8 @@ export default {
      * @param {boolean} simplify simplify compound after unite
      * @param {undoable} undoable add an undo action.
      * @param {isBBox} isBBox mark annotation as bbox.
-     * @param {isVerified} isVerified mark annotation as verified
      */
-    unite(compound, simplify = true, undoable = true, isBBox = false, isVerified = false) {
+    unite(compound, simplify = true, undoable = true, isBBox = false) {
       if (this.compoundPath == null) this.createCompoundPath();
 
       let newCompound = this.compoundPath.unite(compound);
@@ -662,7 +661,6 @@ export default {
       newCompound.onDoubleClick = this.compoundPath.onDoubleClick;
       newCompound.onClick = this.compoundPath.onClick;
       this.annotation.isbbox = isBBox;
-      this.annotation.isverified = isVerified;
       
       if (undoable) this.createUndoAction("Unite");
 
@@ -722,7 +720,6 @@ export default {
       let annotationData = {
         id: this.annotation.id,
         isbbox: this.annotation.isbbox,
-        isverified: this.annotation.isverified,
         color: this.color,
         metadata: metadata
       };

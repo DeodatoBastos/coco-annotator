@@ -325,6 +325,11 @@ export default {
       type: [Number, String],
       required: true,
     },
+    verified: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {
@@ -384,7 +389,6 @@ export default {
       pinching: {
         old_zoom: 1,
       },
-      verified: false,
     };
   },
   methods: {
@@ -686,9 +690,9 @@ export default {
       return this.$refs.category[index];
     },
     // Current Annotation Operations
-    uniteCurrentAnnotation(compound, simplify = true, undoable = true, isBBox = false, isVerified = false) {
+    uniteCurrentAnnotation(compound, simplify = true, undoable = true, isBBox = false) {
       if (this.currentAnnotation == null) return;
-      this.currentAnnotation.unite(compound, simplify, undoable, isBBox, isVerified);
+      this.currentAnnotation.unite(compound, simplify, undoable, isBBox);
     },
     subtractCurrentAnnotation(compound, simplify = true, undoable = true) {
       if (this.currentCategory == null) return;
@@ -885,7 +889,7 @@ export default {
       if (!categoryComponent) return null;
       return categoryComponent.category;
     },
-    addAnnotation(categoryName, segments, keypoints, isbbox = false, isverified = false) {
+    addAnnotation(categoryName, segments, keypoints, isbbox = false) {
       segments = segments || [];
       keypoints = keypoints || [];
 
@@ -900,7 +904,6 @@ export default {
         segmentation: segments,
         keypoints: keypoints,
         isbbox: isbbox,
-        isverified: isverified,
       }).then((response) => {
         let annotation = response.data;
         category.annotations.push(annotation);
@@ -946,17 +949,9 @@ export default {
       if (this.image.previous != null)
         this.$refs.filetitle.route(this.image.previous);
     },
-    getVerifyInfo() {
-      let url = "/api/image/" + this.image.id + "/coco";
-      // id = this.image.id
-
-      axios.get(url).then((response) => {
-        this.verified = response.data.annotations[0].isverified
-      });
-    }
-    // updateVerifyInfo() {
-      // TODO: update json file
-    //}
+    // verfiy() {
+    //   // change the value in json
+    // }
   },
   watch: {
     doneLoading(done) {
@@ -1098,7 +1093,6 @@ export default {
 
     this.initCanvas();
     this.getData();
-    this.getVerifyInfo();
 
     this.$socket.emit("annotating", { image_id: this.image.id, active: true });
   },

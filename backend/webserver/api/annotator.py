@@ -102,7 +102,6 @@ class AnnotatorData(Resource):
                     add_to_set__events=sessions,
                     inc__milliseconds=total_time,
                     set__isbbox=annotation.get('isbbox', False),
-                    set__isverified=annotation.get('isverified', False),
                     set__keypoints=keypoints,
                     set__metadata=annotation.get('metadata'),
                     set__color=annotation.get('color')
@@ -124,7 +123,6 @@ class AnnotatorData(Resource):
                         set__segmentation=segmentation,
                         set__area=area,
                         set__isbbox=annotation.get('isbbox', False),
-                        set_isverified=annotation.get('isverified', False),
                         set__bbox=bbox,
                         set__paper_object=paperjs_object,
                     )

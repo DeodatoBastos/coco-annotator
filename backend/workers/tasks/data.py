@@ -236,7 +236,6 @@ def import_annotations(task_id, dataset_id, coco_json):
         area = annotation.get('area', 0)
         bbox = annotation.get('bbox', [0, 0, 0, 0])
         isbbox = annotation.get('isbbox', False)
-        isverified = annotation.get('isverified', False)
 
         progress += 1
         task.set_progress((progress / total_items) * 100, socket=socket)
@@ -282,13 +281,11 @@ def import_annotations(task_id, dataset_id, coco_json):
                 annotation_model.keypoints = keypoints
 
             annotation_model.isbbox = isbbox
-            annotation_model.isverified = isverified
             annotation_model.save()
 
             image_categories.append(category_id)
         else:
             annotation_model.update(deleted=False, isbbox=isbbox)
-            annotation_model.update(deleted=False, isverified=isverified)
             task.info(
                 f"Annotation already exists (i:{image_id}, c:{category_id})")
 
