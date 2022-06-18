@@ -31,6 +31,7 @@ image_upload.add_argument('image', location='files',
                           help='PNG or JPG file')
 image_upload.add_argument('dataset_id', required=True, type=int,
                           help='Id of dataset to insert image into')
+image_upload.add_argument('isverified', type=bool, location='json', default=False)
 
 image_download = reqparse.RequestParser()
 image_download.add_argument('asAttachment', type=bool, default=False)
@@ -80,6 +81,7 @@ class Images(Resource):
         image = args['image']
 
         dataset_id = args['dataset_id']
+        isverified = args['isverified']
         try:
             dataset = DatasetModel.objects.get(id=dataset_id)
         except:
@@ -97,7 +99,7 @@ class Images(Resource):
         image.close()
         pil_image.close()
         try:
-            db_image = ImageModel.create_from_path(path, dataset_id).save()
+            db_image = ImageModel.create_from_path(path, dataset_id, isverified).save()
         except NotUniqueError:
             db_image = ImageModel.objects.get(path=path)
         return db_image.id

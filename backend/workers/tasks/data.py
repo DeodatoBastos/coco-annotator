@@ -204,6 +204,7 @@ def import_annotations(task_id, dataset_id, coco_json):
     for image in coco_images:
         image_id = image.get('id')
         image_filename = image.get('file_name')
+        isverified = image.get('isverified', False)
 
         # update progress
         progress += 1
@@ -222,6 +223,7 @@ def import_annotations(task_id, dataset_id, coco_json):
 
         task.info(f"Image {image_filename} found")
         image_model = image_model[0]
+        image_model.isverified = isverified
         images_id[image_id] = image_model
         categories_by_image[image_id] = list()
 
@@ -303,7 +305,8 @@ def import_annotations(task_id, dataset_id, coco_json):
         image_model.update(
             set__annotated=True,
             set__category_ids=list(set(all_category_ids)),
-            set__num_annotations=num_annotations
+            set__num_annotations=num_annotations,
+            set__isverified=isverified
         )
 
     task.set_progress(100, socket=socket)
