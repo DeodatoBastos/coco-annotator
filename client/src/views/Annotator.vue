@@ -325,11 +325,6 @@ export default {
       type: [Number, String],
       required: true,
     },
-    verified: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
   },
   data() {
     return {
@@ -389,6 +384,7 @@ export default {
       pinching: {
         old_zoom: 1,
       },
+      verified: false
     };
   },
   methods: {
@@ -612,6 +608,7 @@ export default {
           this.image.next = data.image.next;
           this.image.previous = data.image.previous;
           this.image.categoryIds = data.image.category_ids || [];
+          this.verified = data.image.isverified;
 
           this.annotating = data.image.annotating || [];
 
