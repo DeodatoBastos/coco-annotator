@@ -16,7 +16,8 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 class ImageModel(DynamicDocument):
 
     COCO_PROPERTIES = ["id", "width", "height", "file_name", "path", "license",\
-                       "flickr_url", "coco_url", "date_captured", "dataset_id"]
+                       "flickr_url", "coco_url", "date_captured", "dataset_id",\
+                       "isverified"]
 
     # -- Contants
     THUMBNAIL_DIRECTORY = '.thumbnail'
@@ -50,6 +51,8 @@ class ImageModel(DynamicDocument):
     coco_url = StringField()
     date_captured = DateTimeField()
 
+    isverified = BooleanField(default=False)
+
     metadata = DictField()
     license = IntField()
 
@@ -61,7 +64,7 @@ class ImageModel(DynamicDocument):
     regenerate_thumbnail = BooleanField(default=False)
 
     @classmethod
-    def create_from_path(cls, path, dataset_id=None):
+    def create_from_path(cls, path, dataset_id=None, isverified=False):
 
         pil_image = Image.open(path)
 
@@ -71,6 +74,7 @@ class ImageModel(DynamicDocument):
         image.width = pil_image.size[0]
         image.height = pil_image.size[1]
         image.regenerate_thumbnail = True
+        image.isverified = isverified
 
         if dataset_id is not None:
             image.dataset_id = dataset_id
