@@ -30,6 +30,7 @@ class AnnotatorData(Resource):
         image = data.get('image')
         dataset = data.get('dataset')
         image_id = image.get('id')
+        isverified = image.get('isverified')
         
         image_model = ImageModel.objects(id=image_id).first()
 
@@ -138,7 +139,8 @@ class AnnotatorData(Resource):
             set__annotated=(num_annotations > 0),
             set__category_ids=image.get('category_ids', []),
             set__regenerate_thumbnail=True,
-            set__num_annotations=num_annotations
+            set__num_annotations=num_annotations,
+            set__isverified=isverified,
         )
 
         thumbnails.generate_thumbnail(image_model)
