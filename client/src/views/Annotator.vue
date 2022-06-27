@@ -11,7 +11,10 @@
           ref="select"
         />
 
-        <ValidationButton :verified="verified" />
+        <ValidationButton
+          :verified="image.isverified"
+          :image="image"
+        />
 
         <hr />
 
@@ -203,7 +206,7 @@
       </div>
     </aside>
 
-    <div v-if="verified" class="middle-verified" :style="{ cursor: cursor }">
+    <div v-if="image.isverified" class="middle-verified" :style="{ cursor: cursor }">
       <v-touch @pinch="onpinch" @pinchstart="onpinchstart">
         <div id="frame" class="frame" @wheel="onwheel">
           <canvas class="canvas" id="editor" ref="image" resize />
@@ -280,7 +283,7 @@ import BrushPanel from "@/components/annotator/panels/BrushPanel";
 import EraserPanel from "@/components/annotator/panels/EraserPanel";
 import KeypointPanel from "@/components/annotator/panels/KeypointPanel";
 import DEXTRPanel from "@/components/annotator/panels/DEXTRPanel";
-import ValidationButton from "../components/annotator/tools/ValidationButton.vue";
+import ValidationButton from "@/components/annotator/tools/ValidationButton.vue";
 
 import { mapMutations } from "vuex";
 
@@ -365,6 +368,7 @@ export default {
         filename: "",
         categoryIds: [],
         data: null,
+        isverified: false,
       },
       text: {
         topLeft: null,
@@ -384,7 +388,6 @@ export default {
       pinching: {
         old_zoom: 1,
       },
-      verified: false
     };
   },
   methods: {
@@ -413,6 +416,7 @@ export default {
             selectedLayers: this.current,
           },
           category_ids: [],
+          isverified: this.image.isverified,
         },
         settings: {
           activeTool: this.activeTool,
@@ -608,7 +612,7 @@ export default {
           this.image.next = data.image.next;
           this.image.previous = data.image.previous;
           this.image.categoryIds = data.image.category_ids || [];
-          this.verified = data.image.isverified;
+          this.image.isverified = data.image.isverified;
 
           this.annotating = data.image.annotating || [];
 
@@ -946,9 +950,6 @@ export default {
       if (this.image.previous != null)
         this.$refs.filetitle.route(this.image.previous);
     },
-    // verfiy() {
-    //   // change the value in json
-    // }
   },
   watch: {
     doneLoading(done) {
