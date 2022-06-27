@@ -7,7 +7,7 @@ export default {
   props: {
     verified: {
       type: Boolean,
-      required: false,
+      required: true,
     },
   },
   data() {
@@ -18,8 +18,8 @@ export default {
   },
   methods: {
     execute() {
-      this.$parent.verified = !this.verified;
-      // this.$parent.verify();
+      this.$parent.image.isverified = !this.verified;
+      this.$parent.save()
     },
   },
 };

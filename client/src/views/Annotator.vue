@@ -13,7 +13,6 @@
 
         <ValidationButton
           :verified="image.isverified"
-          :image="image"
         />
 
         <hr />
